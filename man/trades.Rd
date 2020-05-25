@@ -12,7 +12,8 @@ trades(
   columns = NULL,
   start = NULL,
   startTime = NULL,
-  endTime = NULL
+  endTime = NULL,
+  use_auth = FALSE
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ Starting date for results in the format \code{"yyyy-mm-dd"} or \code{"yyyy-mm-dd
 
 \item{endTime}{an optional character string.
 Ending date for results in the format \code{"yyyy-mm-dd"} or \code{"yyyy-mm-dd hh-mm-ss"}.}
+
+\item{use_auth}{logical. Use \code{TRUE} to enable authentication with API key.}
 }
 \value{
 \code{trades()} returns a \code{data.frame} containing:
@@ -61,18 +64,20 @@ exchange.
 \examples{
 \donttest{
 # Return 1000 most recent trades for symbol "XBTUSD".
-trades(symbol = "XBTUSD")
+trades(symbol = "XBTUSD", count = 10)
 
 # Use filter for very specific values: Return trade data executed at 12:15.
 trades(
   symbol = "XBTUSD",
-  filter = "{'timestamp.minute':'12:15'}"
+  filter = "{'timestamp.minute':'12:15'}",
+  count = 10
 )
 
 # Also possible to combine more than one filter.
 trades(
   symbol = "XBTUSD",
-  filter = "{'timestamp.minute':'12:15', 'size':10000}"
+  filter = "{'timestamp.minute':'12:15', 'size':10000}",
+  count = 10
 )
 }
 

@@ -1,0 +1,43 @@
+---
+title: "Authentication"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{authentication}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+To access private endpoints in the BitMEX API, authentication is needed. First, an API key and secret need to be generated for the account you want to use with `bitmexr`. For guidance see https://www.bitmex.com/app/restAPI#Authentication
+
+When you have an API key, edit your .Renviron file and include both the key and secret.
+
+Open .Renviron:
+
+```r
+file.edit("~/.Renviron")
+```
+
+For a testnet API key use:
+
+```
+testnet_bitmex_apikey = "your testnet api key"
+testnet_bitmex_apisecret = "your testnet api sectret"
+```
+
+For a live API key use:
+
+```
+bitmex_apikey = "your live api key"
+bitmex_apisecret = "your live api sectret"
+```
+
+Functions in `bitmexr` requiring authentication will use relevant key/secret when creating the encrypted signature to send to private API endpoints. You can use the testnet API to ensure the functions work as you'd expect prior to using the live API.
+
+For more information about how the authentication process works see https://www.bitmex.com/app/apiKeysUsage. 

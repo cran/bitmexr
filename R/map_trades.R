@@ -25,8 +25,10 @@
 #' Ending date for results in the format `"yyyy-mm-dd"` or `"yyyy-mm-dd hh-mm-ss"`.
 #' @param filter an optional character string for table filtering.
 #' Send JSON key/value pairs, such as `"{'key':'value'}"`. See examples in [trades()].
+#' @param use_auth logical. Use `TRUE` to enable authentication with API key.
 #' @param verbose logical. If `TRUE`, will print information to the console. Useful for
 #' long running requests.
+
 #'
 #'
 #' @family trades
@@ -64,6 +66,7 @@ map_trades <- function(
   start_date = "2019-01-01 12:00:00",
   end_date = "2019-01-01 12:15:00",
   filter = NULL,
+  use_auth = FALSE,
   verbose = FALSE
 ) {
   check_internet()
@@ -108,18 +111,26 @@ map_trades <- function(
 
   result <- tibble()
 
+  if (isTRUE(use_auth)) {
+    delay <- 1
+    requests <- 60
+  } else {
+    delay <- 2
+    requests <- 30
+  }
+
   if (verbose == TRUE) {
     cat(
       "Getting trade data between",
       format(start_date, "%Y/%m/%d %H:%M:%S"),
       "and",
       format(end_date, "%Y/%m/%d %H:%M:%S"),
-      paste0("\nCurrent limit is 30 requests per minute\n")
+      paste0("\nCurrent limit is ", requests, " requests per minute\n")
     )
   }
 
 
-  limit_trades <- slowly(trades, rate_delay(2))
+  limit_trades <- slowly(trades, rate_delay(delay))
 
   repeat({
     data <- limit_trades(
@@ -127,7 +138,139 @@ map_trades <- function(
       reverse = "false",
       symbol = symbol,
       filter = filter,
-      count = 1000
+      count = 1000,
+      use_auth = use_auth
+    )
+
+    if (start_date > end_date) break() # the end was reached...
+
+    result <- rbind(result, data)
+
+    if (verbose == TRUE) {
+      cat(
+        "\rCurrent progress: ",
+        format(
+          as_datetime(max(result$timestamp)),
+          "%Y/%m/%d %H:%M:%OS"
+        )
+      )
+    }
+
+    flush.console()
+
+    start_date <- as_datetime(max(result$timestamp))
+  })
+
+  result <- result %>%
+    mutate(timestamp = as_datetime(.data$timestamp)) %>%
+    filter(.data$timestamp <= end_date)
+
+  return(result)
+}
+
+
+#' Trade data over an extended period (testnet)
+#'
+#' The map variant of [tn_trades()] uses a repeat loop to continually
+#' request trade data between two time points.
+#' The function will stop when the `start_date` is greater than `end_date`.
+#'
+#' @family tn_trades
+#'
+#' @inheritParams map_trades
+#'
+#' @examples
+#' \donttest{
+#'
+#' # Get all trade data between 2019-05-03 12:00:00 and 2019-05-03 12:15:00
+#'
+#' tn_map_trades(
+#'   start_date = "2019-05-03 12:00:00",
+#'   end_date = "2019-05-03 12:15:00",
+#'   symbol = "XBTUSD"
+#' )
+#' }
+#'
+#' @export
+tn_map_trades <- function(
+  symbol = "XBTUSD",
+  start_date = "2019-01-01 12:00:00",
+  end_date = "2019-01-01 12:15:00",
+  filter = NULL,
+  use_auth = FALSE,
+  verbose = FALSE
+) {
+  check_internet()
+
+  stop_if(
+    date_check(start_date),
+    .p = isFALSE,
+    msg = "Invalid date format. Please use 'yyyy-mm-dd' or 'yyyy-mm-dd hh:mm:ss'"
+  )
+
+  stop_if(
+    date_check(end_date),
+    .p = isFALSE,
+    msg = "Invalid date format. Please use 'yyyy-mm-dd' or 'yyyy-mm-dd hh:mm:ss'"
+  )
+
+  if (!is.null(start_date) & !is.null(end_date)) {
+    start_date <- as_datetime(start_date)
+
+    end_date <- as_datetime(end_date)
+
+    vd <- valid_dates(symbol)
+
+    message_if(
+      vd$timestamp > start_date,
+      msg = paste0(
+        "Earliest start date for given symbol is: ",
+        vd$timestamp,
+        ".\nContinuing with earliest start date"
+      )
+    )
+  }
+
+  stop_if(
+    start_date > end_date,
+    msg = "Make sure start date is before end date"
+  )
+
+  trade_warning(start = start_date, end = end_date)
+
+  check_internet()
+
+  result <- tibble()
+
+  if (isTRUE(use_auth)) {
+    delay <- 1
+    requests <- 60
+  } else {
+    delay <- 2
+    requests <- 30
+  }
+
+  if (verbose == TRUE) {
+    cat(
+      "Getting trade data between",
+      format(start_date, "%Y/%m/%d %H:%M:%S"),
+      "and",
+      format(end_date, "%Y/%m/%d %H:%M:%S"),
+      paste0("\nCurrent limit is ", requests, " requests per minute\n")
+    )
+  }
+
+
+  limit_trades <- slowly(tn_trades, rate_delay(delay))
+
+  repeat({
+    data <- limit_trades(
+      startTime = start_date,
+      reverse = "false",
+      symbol = symbol,
+      filter = filter,
+      count = 1000,
+      use_auth = use_auth
     )
 
     if (start_date > end_date) break() # the end was reached...

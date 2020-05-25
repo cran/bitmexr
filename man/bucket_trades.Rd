@@ -14,7 +14,8 @@ bucket_trades(
   columns = NULL,
   start = NULL,
   startTime = NULL,
-  endTime = NULL
+  endTime = NULL,
+  use_auth = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ Starting date for results in the format \code{"yyyy-mm-dd"} or \code{"yyyy-mm-dd
 
 \item{endTime}{an optional character string.
 Ending date for results in the format \code{"yyyy-mm-dd"} or \code{"yyyy-mm-dd hh-mm-ss"}.}
+
+\item{use_auth}{logical. Use \code{TRUE} to enable authentication with API key.}
 }
 \value{
 \code{bucket_trades()} returns a \code{data.frame} containing:
@@ -79,7 +82,8 @@ consider using \code{\link[=map_bucket_trades]{map_bucket_trades()}}.
 
 bucket_trades(
   binSize = "1h",
-  symbol = "ETHUSD"
+  symbol = "ETHUSD",
+  count = 10
 )
 }
 }
