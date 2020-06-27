@@ -1,3 +1,8 @@
+# bitmexr 0.3.1
+
+* Fix test issues for cran
+* Minor documentation updates
+
 # bitmexr 0.3.0
 
 bitmexr 0.3.0 brings some signification changes to the package.

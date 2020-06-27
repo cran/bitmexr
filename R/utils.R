@@ -76,15 +76,20 @@ as <- available_symbols()
 #' symbol to find start date for, or `NULL` for all available symbols
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' valid_dates("XBTUSD")
 #'
 #' valid_dates(NULL)
 #' }
 #' @export
 valid_dates <- function(symbol = NULL) {
+
+  check_internet()
+
   if (is.null(symbol)) {
-    dates <- map_dfr(available_symbols(), ~ trades(.x, count = 1, reverse = "false")) %>%
+    limit_trades <- slowly(trades, rate_delay(1))
+
+    dates <- map_dfr(available_symbols(), ~ limit_trades(.x, count = 1, reverse = "false")) %>%
       select(.data$symbol, .data$timestamp) %>%
       mutate(timestamp = as_datetime(.data$timestamp))
   } else {
