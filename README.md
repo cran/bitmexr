@@ -1,19 +1,14 @@
 
-# bitmexr: R Client for the BitMEX Exchange
+# bitmexr - R Client for the bitmex exchange <a href='https://hfshr.github.io/bitmexr/'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/hfshr/bitmexr.svg?branch=master)](https://travis-ci.org/hfshr/bitmexr)
-[![Codecov test
-coverage](https://codecov.io/gh/hfshr/bitmexr/branch/master/graph/badge.svg)](https://codecov.io/gh/hfshr/bitmexr?branch=master)
-[![R build
-status](https://github.com/hfshr/bitmexr/workflows/R-CMD-check/badge.svg)](https://github.com/hfshr/bitmexr/actions)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/bitmexr)](https://CRAN.R-project.org/package=bitmexr)
+[![R build status](https://github.com/hfshr/bitmexr/workflows/R-CMD-check/badge.svg)](https://github.com/hfshr/bitmexr/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/bitmexr)](https://CRAN.R-project.org/package=bitmexr)
+[![](https://cranlogs.r-pkg.org/badges/bitmexr)](https://cran.r-project.org/package=bitmexr)
 <!-- badges: end -->
 
-# Overview
+## Overview
 
 The goal of `bitmexr` is to provide an API wrapper for cryptocurrency
 derivatives exchange, BitMEX. `bitmexr` now provides support for all API
@@ -21,7 +16,7 @@ endpoints for both the Testnet (www.testnet.bitmex.com) and the live
 exchange (www.bitmex.com). For more information about the API, check
 <https://www.bitmex.com/app/apiOverview>.
 
-# Installation
+## Installation
 
 The development version of `bitmexr` can be installed from github:
 
@@ -36,13 +31,13 @@ Or the released version from CRAN:
 install.packages("bitmexr")
 ```
 
-# Package contents
+## Package contents
 
 The package contains dedicated wrappers for the majority of API
 endpoints.
 
   - `trades()` and `map_trades()` return individual trade data for a
-    specified symbol/time period
+    specified symbol/time period.
   - `bucket_trades()` and `map_bucket_trades()` return bucketed trade
     data (open, high, low, close) for either 1-minute, 5-minute, 1-hour
     or 1-day time frames for a specified symbol.
@@ -73,18 +68,18 @@ requires an API key and secret. `bitmexr` reads these from your
 [Authentication](https://hfshr.github.io/bitmexr/articles/authentication.html)
 for more information.
 
-# Disclaimer
+## Disclaimer
 
 This software is in no way affiliated, endorsed, or approved by the
 [BitMEX cryptocurrency exchange](https://www.bitmex.com) or any of its
 affiliates.
 
-# Contribution
+## Contribution
 
 If you spot any issues, or would like additional features added, please
 feel free to raise an issue, or submit a pull request.
 
-# Code of Conduct
+## Code of Conduct
 
 Please note that this project is released with a [Contributor Code of
 Conduct](https://hfshr.github.io/bitmexr/CODE_OF_CONDUCT.html). By
