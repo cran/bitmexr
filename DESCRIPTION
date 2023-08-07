@@ -1,7 +1,7 @@
 Type: Package
 Package: bitmexr
 Title: R Client for BitMEX
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: 
     person(given = "Harry",
            family = "Fisher",
@@ -21,10 +21,10 @@ Suggests: covr, ggplot2, httptest, knitr, rmarkdown, testthat,
         tidyquant
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2022-09-30 17:10:43 UTC; harry
+Packaged: 2023-08-07 18:52:21 UTC; harry
 Author: Harry Fisher [cre, aut, cph]
 Maintainer: Harry Fisher <harryfisher21@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-09-30 17:30:02 UTC
+Date/Publication: 2023-08-07 19:40:10 UTC

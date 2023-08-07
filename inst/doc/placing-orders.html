@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -67,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -101,7 +86,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -114,7 +99,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -352,59 +337,84 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Placing and managing orders with bitmexr</h1>
+<h1 class="title toc-ignore">Placing and managing orders with
+bitmexr</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(bitmexr)</span></code></pre></div>
-<p><code>bitmexr</code> now supports placing, editing and cancelling orders on both the testnet API and live API provided by BitMEX. This vignette outlines how you can use <code>place_order()</code>, <code>edit_order()</code> and <code>cancel_order()</code> to manage your BitMEX trading directly from R! For more information about the API please visit (<a href="https://www.bitmex.com/app/apiOverview" class="uri">https://www.bitmex.com/app/apiOverview</a>)</p>
-<p>The following examples will use the tn_* varients of the managing trades functions (<code>tn_place_order()</code>, <code>tn_edit_order()</code> and <code>tn_cancel_order()</code>) to access the testnet API. These functions will work in exactly the same way when using the live API (without the tn_ prefix).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bitmexr)</span></code></pre></div>
+<p><code>bitmexr</code> now supports placing, editing and cancelling
+orders on both the testnet API and live API provided by BitMEX. This
+vignette outlines how you can use <code>place_order()</code>,
+<code>edit_order()</code> and <code>cancel_order()</code> to manage your
+BitMEX trading directly from R! For more information about the API
+please visit (<a href="https://www.bitmex.com/app/apiOverview" class="uri">https://www.bitmex.com/app/apiOverview</a>)</p>
+<p>The following examples will use the tn_* varients of the managing
+trades functions (<code>tn_place_order()</code>,
+<code>tn_edit_order()</code> and <code>tn_cancel_order()</code>) to
+access the testnet API. These functions will work in exactly the same
+way when using the live API (without the tn_ prefix).</p>
 <div id="placing-orders" class="section level1">
 <h1>Placing orders</h1>
 <p>Use the following to place an order on the exchange</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">tn_place_order</span>(<span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>               <span class="dt">orderQty =</span> <span class="dv">10</span>, </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>               <span class="dt">price =</span> <span class="dv">5000</span>)</span></code></pre></div>
-<p>If <code>price</code> is not specified, a market order will be used.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">tn_place_order</span>(<span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>               <span class="dt">orderQty =</span> <span class="dv">10</span>)</span></code></pre></div>
-<p>You can specific <code>side = Sell</code> or use a negative <code>orderQty</code> to initiate a sell order.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">tn_place_order</span>(<span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>               <span class="dt">orderQty =</span> <span class="dv">-10</span>, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>               <span class="dt">price =</span> <span class="dv">10000</span>)</span></code></pre></div>
-<p>Use <code>?tn_place_order()</code> or <code>?place_order()</code> to see the full list of order options, or visit <a href="https://www.bitmex.com/api/explorer/#/Order" class="uri">https://www.bitmex.com/api/explorer/#/Order</a></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_place_order</span>(<span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">orderQty =</span> <span class="dv">10</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">price =</span> <span class="dv">5000</span>)</span></code></pre></div>
+<p>If <code>price</code> is not specified, a market order will be
+used.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_place_order</span>(<span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">orderQty =</span> <span class="dv">10</span>)</span></code></pre></div>
+<p>You can specific <code>side = Sell</code> or use a negative
+<code>orderQty</code> to initiate a sell order.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_place_order</span>(<span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">orderQty =</span> <span class="sc">-</span><span class="dv">10</span>, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">price =</span> <span class="dv">10000</span>)</span></code></pre></div>
+<p>Use <code>?tn_place_order()</code> or <code>?place_order()</code> to
+see the full list of order options, or visit <a href="https://www.bitmex.com/api/explorer/#/Order" class="uri">https://www.bitmex.com/api/explorer/#/Order</a></p>
 </div>
 <div id="editing-orders" class="section level1">
 <h1>Editing orders</h1>
-<p>Once an order has been placed, it is possible to edit the order using either the <code>orderID</code> returned when using <code>place_order()</code> or the custom client order id specified using <code>clOrdID</code>.</p>
+<p>Once an order has been placed, it is possible to edit the order using
+either the <code>orderID</code> returned when using
+<code>place_order()</code> or the custom client order id specified using
+<code>clOrdID</code>.</p>
 <p>For example placing the following order:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">tn_place_order</span>(<span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>               <span class="dt">orderQty =</span> <span class="dv">100</span>, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>               <span class="dt">price =</span> <span class="dv">5000</span>, </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>               <span class="dt">clOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_place_order</span>(<span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">orderQty =</span> <span class="dv">100</span>, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">price =</span> <span class="dv">5000</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">clOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>)</span></code></pre></div>
 <p>Could be edited using:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">tn_edit_order</span>(<span class="dt">origClOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>              <span class="dt">price =</span> <span class="dv">4000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_edit_order</span>(<span class="at">origClOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">price =</span> <span class="dv">4000</span>)</span></code></pre></div>
 </div>
 <div id="cancel-orders" class="section level1">
 <h1>Cancel orders</h1>
-<p>Cancelling order is very similar to editing order, simply use the orderID or clOrdID</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">tn_cancel_order</span>(<span class="dt">clOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>)</span></code></pre></div>
-<p>It is also possible to cancel all orders. For example cancel all sell orders using:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">tn_cancel_all_orders</span>(<span class="dt">filter =</span> <span class="st">&#39;{&quot;side&quot;: &quot;Sell&quot;&#39;</span>)</span></code></pre></div>
+<p>Cancelling order is very similar to editing order, simply use the
+orderID or clOrdID</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_cancel_order</span>(<span class="at">clOrdID =</span> <span class="st">&quot;mybigorder&quot;</span>)</span></code></pre></div>
+<p>It is also possible to cancel all orders. For example cancel all sell
+orders using:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_cancel_all_orders</span>(<span class="at">filter =</span> <span class="st">&#39;{&quot;side&quot;: &quot;Sell&quot;&#39;</span>)</span></code></pre></div>
 </div>
 <div id="extra" class="section level1">
 <h1>Extra</h1>
-<p>The <code>get_bitmex</code> and <code>post_bitmex</code> functions can be used to access additional API endpoints that do not have a dedicated wrapper.</p>
-<p>The <code>path</code> argument is the API endpoint and always starts with a “/” (e.g., “/chat”). The <code>args</code> argument is a named list of valid parameter values to pass to the API endpoint. These are well documented on <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a></p>
-<p>For example, to access the user information for your testnet account you can use:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">tn_get_bitmex</span>(<span class="dt">path =</span> <span class="st">&quot;/user&quot;</span>, <span class="dt">use_auth =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>The <code>get_bitmex</code> and <code>post_bitmex</code> functions
+can be used to access additional API endpoints that do not have a
+dedicated wrapper.</p>
+<p>The <code>path</code> argument is the API endpoint and always starts
+with a “/” (e.g., “/chat”). The <code>args</code> argument is a named
+list of valid parameter values to pass to the API endpoint. These are
+well documented on <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a></p>
+<p>For example, to access the user information for your testnet account
+you can use:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_get_bitmex</span>(<span class="at">path =</span> <span class="st">&quot;/user&quot;</span>, <span class="at">use_auth =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>As this is a private API endpoint, authentication was required.</p>
 <p>A POST example to increase the leverage on a position is:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">tn_post_bitmex</span>(<span class="dt">path =</span> <span class="st">&quot;/position/leverage&quot;</span>, </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>               <span class="dt">args =</span> <span class="kw">list</span>(<span class="st">&quot;symbol&quot;</span> =<span class="st"> &quot;XBTUSD&quot;</span>, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>                           <span class="st">&quot;leverage&quot;</span> =<span class="st"> </span><span class="dv">10</span>))</span></code></pre></div>
-<p>Please use the <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a> to view all possible API endpoints.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tn_post_bitmex</span>(<span class="at">path =</span> <span class="st">&quot;/position/leverage&quot;</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">args =</span> <span class="fu">list</span>(<span class="st">&quot;symbol&quot;</span> <span class="ot">=</span> <span class="st">&quot;XBTUSD&quot;</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;leverage&quot;</span> <span class="ot">=</span> <span class="dv">10</span>))</span></code></pre></div>
+<p>Please use the <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a> to view all
+possible API endpoints.</p>
 </div>
 
 

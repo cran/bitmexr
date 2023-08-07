@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -255,31 +239,51 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p>This vignette gives a brief overview of the main functions within the <code>bitmexr</code> package. The package supports both the testnet and live API endpoints, simply use the <code>tn_</code> prefix to any of the functions in the package (e.g., <code>bitmexr::trades()</code> accesses trade data from the live API whereas <code>bitmexr::tn_trades()</code> accesses trade data from the testnet API). This is useful is you want to test out placing/managing orders in a risk free environment.</p>
+<p>This vignette gives a brief overview of the main functions within the
+<code>bitmexr</code> package. The package supports both the testnet and
+live API endpoints, simply use the <code>tn_</code> prefix to any of the
+functions in the package (e.g., <code>bitmexr::trades()</code> accesses
+trade data from the live API whereas <code>bitmexr::tn_trades()</code>
+accesses trade data from the testnet API). This is useful is you want to
+test out placing/managing orders in a risk free environment.</p>
 <div id="trade-data" class="section level1">
 <h1>Trade data</h1>
-<p>To access trades that have been executed on the exchange you can use either:</p>
+<p>To access trades that have been executed on the exchange you can use
+either:</p>
 <ul>
-<li><code>trades()</code>: to get individual trades that have been executed.</li>
-<li><code>bucket_trades()</code>: to get bucketed trade data in 1-minute, 5-minute, 1-hour or 1-day buckets</li>
+<li><code>trades()</code>: to get individual trades that have been
+executed.</li>
+<li><code>bucket_trades()</code>: to get bucketed trade data in
+1-minute, 5-minute, 1-hour or 1-day buckets</li>
 </ul>
-<p><code>bucket_trades()</code> is typically more useful when wanting data over an extended period of time due to the sheer volume of trades that are executed on the exchange each day. These functions also have map_* variants to help overcome the 1000 row per request limit.</p>
-<p>Please see the <a href="trade-data.html">Trade data</a> vignette for more details on these functions.</p>
+<p><code>bucket_trades()</code> is typically more useful when wanting
+data over an extended period of time due to the sheer volume of trades
+that are executed on the exchange each day. These functions also have
+map_* variants to help overcome the 1000 row per request limit.</p>
+<p>Please see the <a href="trade-data.html">Trade data</a> vignette for
+more details on these functions.</p>
 </div>
 <div id="placing-editing-and-cancelling-orders" class="section level1">
 <h1>Placing, editing and cancelling orders</h1>
-<p><code>bitmexr</code> also supports placing and managing orders on the exchange. These functions require an API key and secret to work. Please read the vignette <a href="authentication.html">Authentication</a> for information on how to set this up in <code>bitmexr</code>.</p>
+<p><code>bitmexr</code> also supports placing and managing orders on the
+exchange. These functions require an API key and secret to work. Please
+read the vignette <a href="authentication.html">Authentication</a> for
+information on how to set this up in <code>bitmexr</code>.</p>
 <p>The following functions are available:</p>
 <ul>
 <li><code>place_order()</code> for placing orders</li>
 <li><code>edit_order()</code> for editing orders</li>
-<li><code>cancel_order()</code> or <code>cancel_all_orders()</code> to cancel orders</li>
+<li><code>cancel_order()</code> or <code>cancel_all_orders()</code> to
+cancel orders</li>
 </ul>
-<p>Please see the vignette <a href="placing-orders.html">Placing and managing order with bitmexr</a> for more information.</p>
+<p>Please see the vignette <a href="placing-orders.html">Placing and
+managing order with bitmexr</a> for more information.</p>
 </div>
 <div id="further-information" class="section level1">
 <h1>Further information</h1>
-<p>It is recommended to have a thorough understanding of the BitMEX API documentation prior to using the package. Please take some time to read both <a href="https://www.bitmex.com/app/apiOverview" class="uri">https://www.bitmex.com/app/apiOverview</a> and <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a>.</p>
+<p>It is recommended to have a thorough understanding of the BitMEX API
+documentation prior to using the package. Please take some time to read
+both <a href="https://www.bitmex.com/app/apiOverview" class="uri">https://www.bitmex.com/app/apiOverview</a> and <a href="https://www.bitmex.com/api/explorer/" class="uri">https://www.bitmex.com/api/explorer/</a>.</p>
 </div>
 
 

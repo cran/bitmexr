@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -67,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -101,7 +86,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -114,7 +99,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -356,89 +341,129 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(bitmexr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(ggplot2)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(tidyquant)</span></code></pre></div>
-<p>The following examples demonstrate how <code>bitmexr</code> can be used to obtain trade data from BitMEX, and used with other packages such as <code>tidyqaunt</code> to explore and visualise the data.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bitmexr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyquant)</span></code></pre></div>
+<p>The following examples demonstrate how <code>bitmexr</code> can be
+used to obtain trade data from BitMEX, and used with other packages such
+as <code>tidyqaunt</code> to explore and visualise the data.</p>
 <div id="core-functions" class="section level1">
 <h1>Core functions</h1>
-<p>The core function used for obtaining trade data are <code>trades()</code> and <code>bucket_trades()</code>.</p>
-<p><code>trades()</code> collects data regarding individual trades that have been executed on the exchange.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co"># Get 1000 most recent trades on the exchange</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>trade_data &lt;-<span class="st"> </span><span class="kw">trades</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  <span class="dt">reverse =</span> <span class="st">&quot;true&quot;</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="dt">count =</span> <span class="dv">1000</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>)</span></code></pre></div>
-<p><code>bucket_trades()</code> collects trade data which has been summarised into the follow time frames: 1-minute, 5-minute, 1-hour and 1-day. Given the large volume of trades performed daily on the exchange, this function is preferred over <code>trades()</code> if you want to obtain data spanning many days.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="co"># Daily OHLC data from 2017-01-01 to 2020-01-01</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>bucket_data &lt;-<span class="st"> </span><span class="kw">bucket_trades</span>(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  <span class="dt">binSize =</span> <span class="st">&quot;1d&quot;</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>  <span class="dt">startTime =</span> <span class="st">&quot;2018-01-01&quot;</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>  <span class="dt">endTime =</span> <span class="st">&quot;2020-05-01&quot;</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>  <span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>)</span></code></pre></div>
-<p>For more fine grained data, you may want to specify a smaller time frame.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co"># 1-minute buckets from 2020-01-01 until 2020-01-03</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>bucket_data &lt;-<span class="st"> </span><span class="kw">bucket_trades</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>  <span class="dt">binSize =</span> <span class="st">&quot;1m&quot;</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>  <span class="dt">startTime =</span> <span class="st">&quot;2020-01-01&quot;</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>  <span class="dt">endTime =</span> <span class="st">&quot;2020-01-03&quot;</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>  <span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a><span class="kw">max</span>(<span class="kw">as.Date</span>(bucket_data<span class="op">$</span>timestamp))</span></code></pre></div>
-<p>However, the maximum date returned is still “2020-01-01”. This is because the maximum number of rows returned per API calls is 1000, and there are greater than 1000 1-minute buckets spanning the desired 3 day sample. To solve this problem, the package provides map_* variants of the two core functions.</p>
+<p>The core function used for obtaining trade data are
+<code>trades()</code> and <code>bucket_trades()</code>.</p>
+<p><code>trades()</code> collects data regarding individual trades that
+have been executed on the exchange.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get 1000 most recent trades on the exchange</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>trade_data <span class="ot">&lt;-</span> <span class="fu">trades</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">reverse =</span> <span class="st">&quot;true&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">count =</span> <span class="dv">1000</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><code>bucket_trades()</code> collects trade data which has been
+summarised into the follow time frames: 1-minute, 5-minute, 1-hour and
+1-day. Given the large volume of trades performed daily on the exchange,
+this function is preferred over <code>trades()</code> if you want to
+obtain data spanning many days.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Daily OHLC data from 2017-01-01 to 2020-01-01</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>bucket_data <span class="ot">&lt;-</span> <span class="fu">bucket_trades</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binSize =</span> <span class="st">&quot;1d&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">startTime =</span> <span class="st">&quot;2018-01-01&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">endTime =</span> <span class="st">&quot;2020-05-01&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>For more fine grained data, you may want to specify a smaller time
+frame.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1-minute buckets from 2020-01-01 until 2020-01-03</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bucket_data <span class="ot">&lt;-</span> <span class="fu">bucket_trades</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binSize =</span> <span class="st">&quot;1m&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">startTime =</span> <span class="st">&quot;2020-01-01&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">endTime =</span> <span class="st">&quot;2020-01-03&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">as.Date</span>(bucket_data<span class="sc">$</span>timestamp))</span></code></pre></div>
+<p>However, the maximum date returned is still “2020-01-01”. This is
+because the maximum number of rows returned per API calls is 1000, and
+there are greater than 1000 1-minute buckets spanning the desired 3 day
+sample. To solve this problem, the package provides map_* variants of
+the two core functions.</p>
 </div>
 <div id="using-the-map_-variants" class="section level1">
 <h1>Using the map_* variants</h1>
-<p>Take our desired 3-day time period again. Using <code>map_bucket_trades()</code> will create the necessary number of API requests to satisfy the desired sample time frame automatically.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>bucket_data_long &lt;-<span class="st"> </span><span class="kw">map_bucket_trades</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>  <span class="dt">binSize =</span> <span class="st">&quot;1m&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>  <span class="dt">start_date =</span> <span class="st">&quot;2020-01-01&quot;</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>  <span class="dt">end_date =</span> <span class="st">&quot;2020-01-03&quot;</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>  <span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>  <span class="dt">verbose =</span> <span class="ot">FALSE</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="kw">max</span>(<span class="kw">as.Date</span>(bucket_data_long<span class="op">$</span>timestamp))</span></code></pre></div>
-<p>If verbose is <code>TRUE</code>, a progress bar is printed in the console to provide information regarding the expected duration for the function to complete. The maximum date in the sample is now equal to the end date in the function.</p>
-<p>The <code>map_trades()</code> function works in a similar way, however because the number of trades per day is not known in advance, it is not possible to estimate how long the function will take. Instead, if verbose is <code>TRUE</code>, this function prints the maximum timestamp from each API call to provide an indication of the current progress and how long is left. The function stops when the start_date is greater than the end_date.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">map_trades</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="dt">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="dt">start_date =</span> <span class="st">&quot;2019-05-03 12:00:00&quot;</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">end_date =</span> <span class="st">&quot;2019-05-03 12:05:00&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">verbose =</span> <span class="ot">TRUE</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>) <span class="op">%&gt;%</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>) <span class="op">%&gt;%</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">head</span>()</span></code></pre></div>
-<p>Without authentication, API requests are limited to 30 per minute. If you have enabled authentication by following you can use the <code>use_auth = TRUE</code> argument to access the higher rate limit of 60 requests per minute.</p>
-<p><strong>Note:</strong> A warning is given when time frames of greater than 1 day are passed into the function. Due to the large number of trades executed on the exchange each day, this function should only be used for specific time intervals of interest. Using <code>map_bucket_trades()</code> is a better option for time intervals spanning multiple days.</p>
+<p>Take our desired 3-day time period again. Using
+<code>map_bucket_trades()</code> will create the necessary number of API
+requests to satisfy the desired sample time frame automatically.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>bucket_data_long <span class="ot">&lt;-</span> <span class="fu">map_bucket_trades</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">binSize =</span> <span class="st">&quot;1m&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_date =</span> <span class="st">&quot;2020-01-01&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date =</span> <span class="st">&quot;2020-01-03&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">as.Date</span>(bucket_data_long<span class="sc">$</span>timestamp))</span></code></pre></div>
+<p>If verbose is <code>TRUE</code>, a progress bar is printed in the
+console to provide information regarding the expected duration for the
+function to complete. The maximum date in the sample is now equal to the
+end date in the function.</p>
+<p>The <code>map_trades()</code> function works in a similar way,
+however because the number of trades per day is not known in advance, it
+is not possible to estimate how long the function will take. Instead, if
+verbose is <code>TRUE</code>, this function prints the maximum timestamp
+from each API call to provide an indication of the current progress and
+how long is left. The function stops when the start_date is greater than
+the end_date.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_trades</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="st">&quot;XBTUSD&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_date =</span> <span class="st">&quot;2019-05-03 12:00:00&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date =</span> <span class="st">&quot;2019-05-03 12:05:00&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<p>Without authentication, API requests are limited to 30 per minute. If
+you have enabled authentication by following you can use the
+<code>use_auth = TRUE</code> argument to access the higher rate limit of
+60 requests per minute.</p>
+<p><strong>Note:</strong> A warning is given when time frames of greater
+than 1 day are passed into the function. Due to the large number of
+trades executed on the exchange each day, this function should only be
+used for specific time intervals of interest. Using
+<code>map_bucket_trades()</code> is a better option for time intervals
+spanning multiple days.</p>
 </div>
 <div id="useful-extras" class="section level1">
 <h1>Useful extras</h1>
-<p><code>available_symbols()</code> returns a character vector of the currently valid symbols available to request.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">paste</span>(<span class="kw">available_symbols</span>(), <span class="dt">collapse =</span> <span class="st">&quot;, &quot;</span>)</span></code></pre></div>
-<p><code>valid_dates()</code> returns the date from which data is available through the API for a given symbol, or all symbols if no symbol is given</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">valid_dates</span>(<span class="st">&quot;ETHUSD&quot;</span>)</span></code></pre></div>
-<p>The core functions <code>trades()</code> and <code>bucket_trades()</code> also have a rate limiter built in that will initiate a 60 second pause to reset the limit if the the maximum number of requests per minute is approached while using the package.</p>
+<p><code>available_symbols()</code> returns a character vector of the
+currently valid symbols available to request.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="fu">available_symbols</span>(), <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>)</span></code></pre></div>
+<p><code>valid_dates()</code> returns the date from which data is
+available through the API for a given symbol, or all symbols if no
+symbol is given</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">valid_dates</span>(<span class="st">&quot;ETHUSD&quot;</span>)</span></code></pre></div>
+<p>The core functions <code>trades()</code> and
+<code>bucket_trades()</code> also have a rate limiter built in that will
+initiate a 60 second pause to reset the limit if the the maximum number
+of requests per minute is approached while using the package.</p>
 </div>
 <div id="use-with-other-packages" class="section level1">
 <h1>Use with other packages</h1>
-<p>Once data has been obtained, it is possible to use packages such as the excellent <code>tidyquant</code> to explore/visualise the data further.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>bucket_data_long <span class="op">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(timestamp <span class="op">&gt;</span><span class="st"> &quot;2020-01-01&quot;</span> <span class="op">&amp;</span><span class="st"> </span>timestamp <span class="op">&lt;</span><span class="st"> &quot;2020-01-03&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">timestamp =</span> <span class="kw">as_datetime</span>(timestamp)) <span class="op">%&gt;%</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> timestamp, <span class="dt">y =</span> close)) <span class="op">+</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_candlestick</span>(<span class="kw">aes</span>(<span class="dt">open =</span> open, <span class="dt">high =</span> high, <span class="dt">low =</span> low, <span class="dt">close =</span> close)) <span class="op">+</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_ma</span>(<span class="dt">ma_fun =</span> SMA, <span class="dt">n =</span> <span class="dv">200</span>) <span class="op">+</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_x_datetime</span>(<span class="dt">date_breaks =</span> <span class="st">&quot;12 hour&quot;</span>, <span class="dt">date_labels =</span> <span class="st">&quot;%H:%M&quot;</span>) <span class="op">+</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme_tq</span>()</span></code></pre></div>
+<p>Once data has been obtained, it is possible to use packages such as
+the excellent <code>tidyquant</code> to explore/visualise the data
+further.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>bucket_data_long <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(timestamp <span class="sc">&gt;</span> <span class="st">&quot;2020-01-01&quot;</span> <span class="sc">&amp;</span> timestamp <span class="sc">&lt;</span> <span class="st">&quot;2020-01-03&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> <span class="fu">as_datetime</span>(timestamp)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> timestamp, <span class="at">y =</span> close)) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_candlestick</span>(<span class="fu">aes</span>(<span class="at">open =</span> open, <span class="at">high =</span> high, <span class="at">low =</span> low, <span class="at">close =</span> close)) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ma</span>(<span class="at">ma_fun =</span> SMA, <span class="at">n =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(<span class="at">date_breaks =</span> <span class="st">&quot;12 hour&quot;</span>, <span class="at">date_labels =</span> <span class="st">&quot;%H:%M&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tq</span>()</span></code></pre></div>
 <p>See the <code>tidyquant</code> vignette for more details <a href="https://CRAN.R-project.org/package=tidyquant" class="uri">https://CRAN.R-project.org/package=tidyquant</a></p>
 </div>
 

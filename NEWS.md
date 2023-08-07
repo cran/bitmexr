@@ -1,6 +1,10 @@
+# bitmexr 0.3.3
+
+* Remove top level call to `available_symbols()` and instead use within functions that require it.
+
 # bitmexr 0.3.2
 
-* Redocument to pass ew CRAN checks
+* Redocument to pass new CRAN checks
 * `valid_dates()` now requires a valid symbol from `available_symbols()`.
 
 # bitmexr 0.3.1
